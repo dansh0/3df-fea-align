@@ -1,3 +1,4 @@
+from __future__ import division
 from math import *
 
 #Extract Data
@@ -78,7 +79,28 @@ for i in range(nodes): #get x/y coordinates, strain values, solve principal angl
     eMax.append(pE)
 
 #Map principal angle to a grid
-#for i in range(int(ceil((xMax-xMin)))):
- #   for j in range(int(ceil((yMax-yMin)))):
-        #find closest value in each quandrant
-        #average values
+div = 1 #how many voxels per unit
+count = 0
+theMatrix = [] #holds all the answers
+for i in range(int(ceil((xMax-xMin)*div))):
+    iColumn = [] #for all your vertical needs
+    for j in range(int(ceil((yMax-yMin)*div))):
+        voxelAngles = []
+        xVal = (i+xMin*div)/div
+        yVal = (j+yMin*div)/div
+        #add every angle from voxel surrounding grid cross to batch
+        #improve this section by adding weighing factors such as eMax, distance, and quadrant
+        for n in range(nodes):
+            if xCoord[n] < xVal+(1/(2*div)) and xCoord[n] > xVal-(1/(2*div)):
+                if yCoord[n] < yVal+(1/(2*div)) and yCoord[n] > yVal-(1/(2*div)):
+                    voxelAngles.append(pAngle[n])
+                    count = count + 1
+        if len(voxelAngles) > 0: #if part of print, take average of batch
+            iColumn.append(sum(voxelAngles)/len(voxelAngles))
+        else: #identify if not part of print
+            iColumn.append(99.9)
+    theMatrix.append(iColumn)
+        
+        
+                    
+        
